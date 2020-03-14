@@ -2179,6 +2179,7 @@ boolean SFE_UBLOX_GPS::getGeofenceState(geofenceState &currentGeofenceState, uin
 //Enables/Disables Low Power Mode using UBX-CFG-RXM
 boolean SFE_UBLOX_GPS::powerSaveMode(bool power_save, uint16_t maxWait)
 {
+#if 0
   // Let's begin by checking the Protocol Version as UBX_CFG_RXM is not supported on the ZED (protocol >= 27)
   uint8_t protVer = getProtocolVersionHigh(maxWait);
   /*
@@ -2193,6 +2194,7 @@ boolean SFE_UBLOX_GPS::powerSaveMode(bool power_save, uint16_t maxWait)
     debugPrintln((char *)F("powerSaveMode (UBX-CFG-RXM) is not supported by this protocol version"));
     return (false);
   }
+#endif 
 
   // Now let's change the power setting using UBX-CFG-RXM
   packetCfg.cls = UBX_CLASS_CFG;
@@ -2200,7 +2202,7 @@ boolean SFE_UBLOX_GPS::powerSaveMode(bool power_save, uint16_t maxWait)
   packetCfg.len = 0;
   packetCfg.startingSpot = 0;
 
-  if (sendCommand(packetCfg, maxWait) == false) //Ask module for the current power management settings. Loads into payloadCfg.
+  if (sendCommand(packetCfg, maxWait) != SFE_UBLOX_STATUS_DATA_SENT) //Ask module for the current power management settings. Loads into payloadCfg.
     return (false);
 
   if (power_save)
@@ -2215,7 +2217,7 @@ boolean SFE_UBLOX_GPS::powerSaveMode(bool power_save, uint16_t maxWait)
   packetCfg.len = 2;
   packetCfg.startingSpot = 0;
 
-  return (sendCommand(packetCfg, maxWait)); //Wait for ack
+  return (sendCommand(packetCfg, maxWait)) == SFE_UBLOX_STATUS_DATA_SENT; //Wait for ack
 }
 
 //Change the dynamic platform model using UBX-CFG-NAV5
