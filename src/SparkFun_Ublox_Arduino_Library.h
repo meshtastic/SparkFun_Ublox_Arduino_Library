@@ -568,6 +568,8 @@ public:
 
 	boolean getRELPOSNED(uint16_t maxWait = 1100); //Get Relative Positioning Information of the NED frame
 
+	boolean powerOff(); /// Put the radio in power off mode until the next time we talk to it over serial
+
 	void enableDebugging(Stream &debugPort = Serial);  //Given a port to print to, enable debug messages
 	void disableDebugging(void);					   //Turn off debug statements
 	void debugPrint(char *message);					   //Safely print debug statements

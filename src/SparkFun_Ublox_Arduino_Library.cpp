@@ -2220,6 +2220,28 @@ boolean SFE_UBLOX_GPS::powerSaveMode(bool power_save, uint16_t maxWait)
   return (sendCommand(packetCfg, maxWait)) == SFE_UBLOX_STATUS_DATA_SENT; //Wait for ack
 }
 
+
+/// Put the radio in power off mode until the next time we talk to it over serial
+boolean SFE_UBLOX_GPS::powerOff()
+{
+  // Now let's change the power setting using UBX-CFG-RXM
+  packetCfg.cls = UBX_CLASS_RXM;
+  packetCfg.id = UBX_RXM_PMREQ;
+  packetCfg.len = 8;
+  packetCfg.startingSpot = 0;
+  payloadCfg[0] = 0; // time in msec
+  payloadCfg[1] = 0;
+  payloadCfg[2] = 0;
+  payloadCfg[3] = 0;
+  payloadCfg[4] = 2; // set the backup bit
+  payloadCfg[5] = 0;
+  payloadCfg[6] = 0;
+  payloadCfg[7] = 0;
+
+  return (sendCommand(packetCfg, 0)) == SFE_UBLOX_STATUS_DATA_SENT; //Wait for ack
+}
+
+
 //Change the dynamic platform model using UBX-CFG-NAV5
 //Possible values are:
 //PORTABLE,STATIONARY,PEDESTRIAN,AUTOMOTIVE,SEA,
