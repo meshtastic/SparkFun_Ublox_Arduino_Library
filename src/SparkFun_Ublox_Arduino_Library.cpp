@@ -746,6 +746,19 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       moduleQueried.headingOfMotion = true;
       moduleQueried.pDOP = true;
     }
+    else if (msg->id == UBX_NAV_SOL && msg->len == 52)
+    {
+      timeOfWeek = extractLong(0);
+      uint8_t flags = extractByte(11);
+      fixType = extractByte(10);
+      SIV = extractByte(47);
+      pDOP = extractInt(44);
+
+      moduleQueried.fixType = true;
+      moduleQueried.pDOP = true;
+      moduleQueried.SIV = true;
+      moduleQueried.gpsiTOW = (flags & 0x08) ? true : false;
+    }
     else if (msg->id == UBX_NAV_TIMEUTC && msg->len == 20)
     {
       timeOfWeek = extractLong(0);
@@ -2471,6 +2484,31 @@ boolean SFE_UBLOX_GPS::getPOSLLH(uint16_t maxWait)
   return (false);
 }
 
+//Get time (supported on NEO 6M)
+boolean SFE_UBLOX_GPS::getSOL(uint16_t maxWait)
+{
+  debugPrintln((char *)F("getSOL: Polling"));
+
+  //The GPS is not automatically reporting navigation position so we have to poll explicitly
+  packetCfg.cls = UBX_CLASS_NAV;
+  packetCfg.id = UBX_NAV_SOL;
+  packetCfg.len = 0;
+  //packetCfg.startingSpot = 20; //Begin listening at spot 20 so we can record up to 20+MAX_PAYLOAD_SIZE = 84 bytes Note:now hard-coded in processUBX
+
+  //The data is parsed as part of processing the response
+  sfe_ublox_status_e retVal = sendCommand(packetCfg, maxWait);
+
+  if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED)
+    return (true);
+
+  if (_printDebug == true)
+  {
+    _debugSerial->print(F("getSOL retVal: "));
+    _debugSerial->println(statusString(retVal));
+  }
+  return (false);
+}
+
 uint32_t SFE_UBLOX_GPS::getTimeOfWeek(uint16_t maxWait /* = 250*/)
 {
   if (moduleQueried.gpsiTOW == false)
@@ -2632,7 +2670,10 @@ uint8_t SFE_UBLOX_GPS::getFixType(uint16_t maxWait)
 {
   if (moduleQueried.fixType == false)
   {
-    getPVT(maxWait);
+    if(neo6M) 
+      getSOL(maxWait); 
+    else 
+      getPVT(maxWait);
   }
   moduleQueried.fixType = false; //Since we are about to give this to user, mark this data as stale
   moduleQueried.all = false;

@@ -280,6 +280,7 @@ const uint8_t UBX_NAV_TIMELS = 0x26;	//Leap second event information
 const uint8_t UBX_NAV_TIMEUTC = 0x21;   //UTC Time Solution
 const uint8_t UBX_NAV_VELECEF = 0x11;   //Velocity Solution in ECEF
 const uint8_t UBX_NAV_VELNED = 0x12;	//Velocity Solution in NED
+const uint8_t UBX_NAV_SOL = 0x06;       //nav solution
 
 //The following are used to configure the RXM UBX messages (receiver manager messages). Descriptions from UBX messages overview (ZED_F9P Interface Description Document page 36)
 const uint8_t UBX_RXM_MEASX = 0x14; //Satellite Measurements for RRLP
@@ -482,6 +483,7 @@ public:
 	boolean getT(uint16_t maxWait = getPVTmaxWait);									 //Query module for latest group of datums and load global vars: lat, long, alt, speed, SIV, accuracies, etc. If autoPVT is disabled, performs an explicit poll and waits, if enabled does not block. Retruns true if new PVT is available.
 	boolean getP(uint16_t maxWait = getPVTmaxWait);									 //Query module for latest group of datums and load global vars: lat, long, alt, speed, SIV, accuracies, etc. If autoPVT is disabled, performs an explicit poll and waits, if enabled does not block. Retruns true if new PVT is available.
 	boolean getTIMEUTC(uint16_t maxWait = getPVTmaxWait);									 //Query module for current time Neo6M only. Retruns true if new PVT is available.
+	boolean getSOL(uint16_t maxWait = getPVTmaxWait);									 //Query module for current time Neo6M only. Retruns true if new PVT is available.
 	boolean getPOSLLH(uint16_t maxWait = getPVTmaxWait);									 //Query module for current time Neo6M only. Retruns true if new PVT is available.
 	boolean setAutoPVT(boolean enabled, boolean implicitUpdate, uint16_t maxWait = 250); //Enable/disable automatic PVT reports at the navigation frequency, with implicitUpdate == false accessing stale data will not issue parsing of data in the rxbuffer of your interface, instead you have to call checkUblox when you want to perform an update
 	boolean getHPPOSLLH(uint16_t maxWait = getHPPOSLLHmaxWait);							 //Query module for latest group of datums and load global vars: lat, long, alt, speed, SIV, accuracies, etc. If autoPVT is disabled, performs an explicit poll and waits, if enabled does not block. Retruns true if new PVT is available.
