@@ -459,23 +459,28 @@ void SFE_UBLOX_GPS::process(uint8_t incoming)
       {
         packetAck.counter = 0;
         packetAck.valid = false;
+        packetAck.len = 0;
         ubxFrameClass = CLASS_ACK;
       }
       else
       {
         packetCfg.counter = 0;
         packetCfg.valid = false;
+        packetCfg.len = 0;
         ubxFrameClass = CLASS_NOT_AN_ACK;
       }
     }
 
-    ubxFrameCounter++;
+    if(currentSentence == UBX) { // we might have just decided we are no longer parsing UBX
 
-    //Depending on this frame's class, pass different structs and payload arrays
-    if (ubxFrameClass == CLASS_ACK)
-      processUBX(incoming, &packetAck);
-    else if (ubxFrameClass == CLASS_NOT_AN_ACK)
-      processUBX(incoming, &packetCfg);
+      ubxFrameCounter++;
+
+      //Depending on this frame's class, pass different structs and payload arrays
+      if (ubxFrameClass == CLASS_ACK)
+        processUBX(incoming, &packetAck);
+      else if (ubxFrameClass == CLASS_NOT_AN_ACK)
+        processUBX(incoming, &packetCfg);
+    }
   }
   else if (currentSentence == NMEA)
   {
@@ -567,7 +572,7 @@ void SFE_UBLOX_GPS::processUBX(uint8_t incoming, ubxPacket *incomingUBX)
 {
   //Add all incoming bytes to the rolling checksum
   //Stop at len+4 as this is the checksum bytes to that should not be added to the rolling checksum
-  if (incomingUBX->counter < incomingUBX->len + 4)
+  if(incomingUBX->counter < incomingUBX->len + 4)
     addToChecksum(incoming);
 
   if (incomingUBX->counter == 0)
