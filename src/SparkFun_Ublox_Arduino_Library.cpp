@@ -2842,7 +2842,7 @@ boolean SFE_UBLOX_GPS::getRELPOSNED(uint16_t maxWait)
 
   //We got a response, now parse the bits
 
-  uint16_t refStationID = extractInt(2);
+  //uint16_t refStationID = extractInt(2);
   //_debugSerial->print(F("refStationID: "));
   //_debugSerial->println(refStationID));
 
