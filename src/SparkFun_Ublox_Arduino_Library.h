@@ -639,12 +639,12 @@ public:
 	uint16_t gpsMillisecond;
 	int32_t gpsNanosecond;
 
-	int32_t latitude;		 //Degrees * 10^-7 (more accurate than floats)
-	int32_t longitude;		 //Degrees * 10^-7 (more accurate than floats)
-	int32_t altitude;		 //Number of mm above ellipsoid
+	int32_t latitude = 0;		 //Degrees * 10^-7 (more accurate than floats)
+	int32_t longitude = 0;		 //Degrees * 10^-7 (more accurate than floats)
+	int32_t altitude = 0;		 //Number of mm above ellipsoid
 	int32_t altitudeMSL;	 //Number of mm above Mean Sea Level
 	uint8_t SIV;			 //Number of satellites used in position solution
-	uint8_t fixType;		 //Tells us when we have a solution aka lock
+	uint8_t fixType = 0;		 //Tells us when we have a solution aka lock
 	uint8_t carrierSolution; //Tells us when we have an RTK float/fixed solution
 	int32_t groundSpeed;	 //mm/s
 	int32_t headingOfMotion; //degrees * 10^-5
