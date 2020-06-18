@@ -2415,14 +2415,15 @@ boolean SFE_UBLOX_GPS::getPVT(uint16_t maxWait)
     //The data is parsed as part of processing the response
     sfe_ublox_status_e retVal = sendCommand(packetCfg, maxWait);
 
-    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED)
-      return (true);
-
     if (_printDebug == true)
     {
       _debugSerial->print(F("getPVT retVal: "));
       _debugSerial->println(statusString(retVal));
     }
+
+    if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED || retVal == SFE_UBLOX_STATUS_SUCCESS)
+      return (true);
+
     return (false);
   }
 }
@@ -2453,14 +2454,15 @@ boolean SFE_UBLOX_GPS::getTIMEUTC(uint16_t maxWait)
   //The data is parsed as part of processing the response
   sfe_ublox_status_e retVal = sendCommand(packetCfg, maxWait);
 
-  if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED)
-    return (true);
-
   if (_printDebug == true)
   {
     _debugSerial->print(F("getTIMEUTC retVal: "));
     _debugSerial->println(statusString(retVal));
   }
+
+  if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED || retVal == SFE_UBLOX_STATUS_SUCCESS)
+    return (true);
+
   return (false);
 }
 
@@ -2478,14 +2480,15 @@ boolean SFE_UBLOX_GPS::getPOSLLH(uint16_t maxWait)
   //The data is parsed as part of processing the response
   sfe_ublox_status_e retVal = sendCommand(packetCfg, maxWait);
 
-  if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED)
-    return (true);
-
   if (_printDebug == true)
   {
     _debugSerial->print(F("getPOSLLH retVal: "));
     _debugSerial->println(statusString(retVal));
   }
+
+  if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED || retVal == SFE_UBLOX_STATUS_SUCCESS)
+    return (true);
+
   return (false);
 }
 
