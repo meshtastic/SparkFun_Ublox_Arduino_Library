@@ -2728,7 +2728,12 @@ int32_t SFE_UBLOX_GPS::getHeading(uint16_t maxWait)
 uint16_t SFE_UBLOX_GPS::getPDOP(uint16_t maxWait)
 {
   if (moduleQueried.pDOP == false)
-    getPVT(maxWait);
+  {
+    if(neo6M) 
+      getSOL(maxWait); 
+    else 
+      getPVT(maxWait);
+  }
   moduleQueried.pDOP = false; //Since we are about to give this to user, mark this data as stale
   moduleQueried.all = false;
 
