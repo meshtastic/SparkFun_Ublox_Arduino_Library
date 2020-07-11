@@ -906,15 +906,20 @@ sfe_ublox_status_e SFE_UBLOX_GPS::sendCommand(ubxPacket outgoingUBX, uint16_t ma
   return retVal;
 }
 
+/// It seems the neo7 family doesn't have any options for where to write.  All writes have no internal address
+bool isNeo7 = true;
+
 //Returns false if sensor fails to respond to I2C traffic
 sfe_ublox_status_e SFE_UBLOX_GPS::sendI2cCommand(ubxPacket outgoingUBX, uint16_t maxWait)
 {
-  //Point at 0xFF data register
-  _i2cPort->beginTransmission((uint8_t)_gpsI2Caddress); //There is no register to write to, we just begin writing data bytes
-  _i2cPort->write(0xFF);
-  if (_i2cPort->endTransmission() != 0)         //Don't release bus
-    return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); //Sensor did not ACK
-
+  if(!isNeo7) {
+    //Point at 0xFF data register
+    _i2cPort->beginTransmission((uint8_t)_gpsI2Caddress); //There is no register to write to, we just begin writing data bytes
+    _i2cPort->write(0xFF);
+    if (_i2cPort->endTransmission() != 0)         //Don't release bus
+      return (SFE_UBLOX_STATUS_I2C_COMM_FAILURE); //Sensor did not ACK
+  }
+  
   //Write header bytes
   _i2cPort->beginTransmission((uint8_t)_gpsI2Caddress); //There is no register to write to, we just begin writing data bytes
   _i2cPort->write(UBX_SYNCH_1);                         //μ - oh ublox, you're funny. I will call you micro-blox from now on.
