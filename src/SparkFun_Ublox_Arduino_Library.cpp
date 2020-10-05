@@ -2511,7 +2511,7 @@ boolean SFE_UBLOX_GPS::getSOL(uint16_t maxWait)
   //The data is parsed as part of processing the response
   sfe_ublox_status_e retVal = sendCommand(packetCfg, maxWait);
 
-  if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED)
+  if (retVal == SFE_UBLOX_STATUS_DATA_RECEIVED || retVal == SFE_UBLOX_STATUS_SUCCESS)
     return (true);
 
   if (_printDebug == true)
@@ -2669,8 +2669,12 @@ int32_t SFE_UBLOX_GPS::getAltitudeMSL(uint16_t maxWait)
 //Get the number of satellites used in fix
 uint8_t SFE_UBLOX_GPS::getSIV(uint16_t maxWait)
 {
-  if (moduleQueried.SIV == false)
-    getPVT(maxWait);
+  if (moduleQueried.SIV == false) {
+    if(neo6M) 
+      getSOL(maxWait); 
+    else   
+      getPVT(maxWait);
+  }
   moduleQueried.SIV = false; //Since we are about to give this to user, mark this data as stale
   moduleQueried.all = false;
 
