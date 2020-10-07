@@ -776,8 +776,8 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       gpsMinute = extractByte(17);
       gpsSecond = extractByte(18);
       gpsNanosecond = extractLong(8); //Includes milliseconds
-      uint8_t valid = extractByte(19);
-      bool gotTime = (valid & 4) ? true : false; // assume all other fields filled once we have TUTC
+      uint8_t valid = extractByte(19) & 0x07;
+      bool gotTime = (valid == 0x07) ? true : false; // require all time fields to be valid before declaring success
 
       //Mark all datums as fresh (not read before)
       moduleQueried.gpsiTOW = gotTime; // valid tow
